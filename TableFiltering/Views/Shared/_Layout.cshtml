@@ -1,0 +1,322 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TableFiltering</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/TableFiltering.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+
+    <style>
+        thead input {
+            width: 100%;
+        }
+    </style>
+    <link href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/fixedheader/3.2.3/css/fixedHeader.dataTables.min.css" rel="stylesheet" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">TableFiltering</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            <p class="display-2 mb-4 text-center">Home</p>
+            <div class="row">
+                <div class="col-md-2">
+                    <a asp-action="Index" asp-controller="BirthCertificates" class="">Birth Certificates</a>
+                </div>
+                <div class="col-md-10">
+                    @RenderBody()
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2023 - TableFiltering - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedheader/3.2.3/js/dataTables.fixedHeader.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+        <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-pdf/2.2.0/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            // Setup - add a text input to each footer cell
+            $('#example thead tr')
+                .clone(true)
+                .addClass('filters')
+                .appendTo('#example thead');
+
+            var table = $('#example').DataTable({
+                orderCellsTop: true,
+                fixedHeader: true,
+                initComplete: function () {
+                    var api = this.api();
+
+                    // For each column
+                    api.columns().eq(0).each(function (colIdx) {
+                        // Set the header cell to contain the input element
+                        var cell = $('.filters th').eq(
+                            $(api.column(colIdx).header()).index()
+                        );
+                        var title = $(cell).text();
+                        $(cell).html('<input type="text" placeholder="Search ' + title.trim() + '" />');
+
+                        // On every keypress in this input
+                        $(
+                            'input',
+                            $('.filters th').eq($(api.column(colIdx).header()).index())
+                        )
+                            .off('keyup change')
+                            .on('change', function (e) {
+                                // Get the search value
+                                $(this).attr('title', $(this).val());
+                                var regexr = '({search})'; //$(this).parents('th').find('select').val();
+
+                                var cursorPosition = this.selectionStart;
+                                // Search the column for that value
+                                api
+                                    .column(colIdx)
+                                    .search(
+                                        this.value != ''
+                                            ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                            : '',
+                                        this.value != '',
+                                        this.value == ''
+                                    )
+                                    .draw();
+                            })
+                            .on('keyup', function (e) {
+                                e.stopPropagation();
+
+                                $(this).trigger('change');
+                                $(this)
+                                    .focus()[0]
+                                    .setSelectionRange(cursorPosition, cursorPosition);
+                            });
+                    });
+
+                    // Populate Father and Mother dropdowns with unique names
+                    var fatherNames = Array.from(new Set(api.column(4).data().toArray()));
+                    var motherNames = Array.from(new Set(api.column(5).data().toArray()));
+
+                    var fatherFilter = $('#fatherFilter');
+                    fatherFilter.empty(); // Clear existing options
+                    fatherFilter.append('<option value="">All</option>'); // Add "All" option
+
+                    $.each(fatherNames, function (index, name) {
+                        fatherFilter.append('<option value="' + name + '">' + name + '</option>');
+                    });
+
+                    var motherFilter = $('#motherFilter');
+                    motherFilter.empty(); // Clear existing options
+                    motherFilter.append('<option value="">All</option>'); // Add "All" option
+
+                    $.each(motherNames, function (index, name) {
+                        motherFilter.append('<option value="' + name + '">' + name + '</option>');
+                    });
+
+                    // Add event handlers for Father and Mother filters
+                    fatherFilter.on('change', function () {
+                        var fatherValue = fatherFilter.val();
+                        table.column(4) // Column index of FatherName
+                            .search(fatherValue)
+                            .draw();
+                    });
+
+                    motherFilter.on('change', function () {
+                        var motherValue = motherFilter.val();
+                        table.column(5) // Column index of MotherName
+                            .search(motherValue)
+                            .draw();
+                    });
+                }
+            });
+            // Add event handlers for Father and Mother filters
+            $('.father-filter').on('change', function () {
+                var selectedFathers = $('.father-filter:checked').map(function () {
+                    return this.value;
+                }).get();
+
+                table.column(4) // Column index of FatherName
+                    .search(selectedFathers.length > 0 ? selectedFathers.join('|') : '', true, false)
+                    .draw();
+            });
+
+            $('.mother-filter').on('change', function () {
+                var selectedMothers = $('.mother-filter:checked').map(function () {
+                    return this.value;
+                }).get();
+
+                table.column(5) // Column index of MotherName
+                    .search(selectedMothers.length > 0 ? selectedMothers.join('|') : '', true, false)
+                    .draw();
+            });
+            // Add event handlers for Place of Birth filter
+            $('.place-of-birth-filter').on('change', function () {
+                var selectedPlacesOfBirth = $('.place-of-birth-filter:checked').map(function () {
+                    return this.value;
+                }).get();
+
+                table.column(3) // Column index of PlaceOfBirth
+                    .search(selectedPlacesOfBirth.length > 0 ? selectedPlacesOfBirth.join('|') : '', true, false)
+                    .draw();
+            });
+
+        });
+    </script>
+    <script>
+        // Father search functionality
+        $('.father-search').on('input', function () {
+            var searchText = $(this).val().toLowerCase();
+            $('.father-filter-item').each(function () {
+                var text = $(this).text().toLowerCase();
+                if (text.includes(searchText)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+
+        // Mother search functionality
+        $('.mother-search').on('input', function () {
+            var searchText = $(this).val().toLowerCase();
+            $('.mother-filter-item').each(function () {
+                var text = $(this).text().toLowerCase();
+                if (text.includes(searchText)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+
+        // Place of birth search functionality
+        $('.place-of-birth-search').on('input', function () {
+            var searchText = $(this).val().toLowerCase();
+            $('.place-of-birth-filter-item').each(function () {
+                var text = $(this).text().toLowerCase();
+                if (text.includes(searchText)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('.uncheck-filter-btn').on('click', function () {
+                var filter = $(this).data('filter');
+                $('.' + filter + '-filter').prop('checked', false);
+                clearFilters(); // Add this line to clear the filters and redraw the table
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Function to clear filters and reset table
+            function clearFilters() {
+                // Clear search inputs
+                var fatherSearchInput = document.querySelector('.father-search');
+                fatherSearchInput.value = '';
+
+                var motherSearchInput = document.querySelector('.mother-search');
+                motherSearchInput.value = '';
+
+                var placeOfBirthSearchInput = document.querySelector('.place-of-birth-search');
+                placeOfBirthSearchInput.value = '';
+            }
+
+            // Function to update table based on checked checkboxes
+            function updateTable() {
+                var fatherCheckboxes = document.querySelectorAll('.father-filter:checked');
+                var fatherValues = Array.from(fatherCheckboxes).map(function (checkbox) {
+                    return checkbox.value;
+                });
+
+                var motherCheckboxes = document.querySelectorAll('.mother-filter:checked');
+                var motherValues = Array.from(motherCheckboxes).map(function (checkbox) {
+                    return checkbox.value;
+                });
+
+                var placeOfBirthCheckboxes = document.querySelectorAll('.place-of-birth-filter:checked');
+                var placeOfBirthValues = Array.from(placeOfBirthCheckboxes).map(function (checkbox) {
+                    return checkbox.value;
+                });
+
+                var table = $('#example').DataTable();
+
+                // Clear search queries and column filters before applying changes
+                table.search('').columns().search('').draw();
+
+                // Apply filters based on checked checkboxes
+                table.column(4).search(fatherValues.join('|'), true, false);
+                table.column(5).search(motherValues.join('|'), true, false);
+                table.column(3).search(placeOfBirthValues.join('|'), true, false);
+
+                // Redraw the table
+                table.draw();
+            }
+
+            // Add event listener to "Clear All" buttons
+            var clearAllButtons = document.querySelectorAll('.uncheck-filter-btn');
+            clearAllButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    clearFilters();
+                    updateTable();
+                });
+            });
+
+            // Add event listener to filter checkboxes
+            var checkboxes = document.querySelectorAll('.form-check-input');
+            checkboxes.forEach(function (checkbox) {
+                checkbox.addEventListener('change', function () {
+                    updateTable();
+                });
+            });
+        });
+    </script>
+
+
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

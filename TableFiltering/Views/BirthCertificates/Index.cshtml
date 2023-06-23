@@ -1,0 +1,173 @@
+﻿@model IEnumerable<TableFiltering.Models.BirthCertificate>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<div class="row mb-3">
+    <div class="col-md-3">
+        <div class="dropdown">
+            <a class="nav-link text-center form-select m-0" href="#" role="button" id="fatherDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Select Father
+            </a>
+            <ul class="dropdown-menu w-100" aria-labelledby="fatherDropdown">
+                <li>
+                    <button class="btn btn-outline-warning w-75 d-block mx-auto mb-2 uncheck-filter-btn" data-filter="father">Clear All</button>
+                </li>
+                <li>
+                    <div class="input-group px-2">
+                        <input type="text" class="form-control father-search" placeholder="Search">
+                    </div>
+                </li>
+                <li>
+                    <hr class="my-2">
+                </li>
+                @foreach (var father in Model.Select(item => item.FatherName).Distinct())
+                {
+                    <li class="father-filter-item">
+                        <div class="form-check form-check-inline ms-2">
+                            <input class="form-check-input father-filter" type="checkbox" value="@father" id="@("father_" + father)">
+                            <label class="form-check-label" for="@("father_" + father)">@father</label>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="dropdown">
+            <a class="nav-link text-center form-select m-0" href="#" role="button" id="motherDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Select Mother
+            </a>
+            <ul class="dropdown-menu w-100" aria-labelledby="motherDropdown">
+                <li>
+                    <button class="btn btn-outline-warning w-75 d-block mx-auto mb-2 uncheck-filter-btn" data-filter="mother">Clear All</button>
+                </li>
+                <li>
+                    <div class="input-group px-2">
+                        <input type="text" class="form-control mother-search" placeholder="Search">
+                    </div>
+                </li>
+                <li>
+                    <hr class="my-2">
+                </li>
+                @foreach (var mother in Model.Select(item => item.MotherName).Distinct())
+                {
+                    <li class="mother-filter-item">
+                        <div class="form-check form-check-inline ms-2">
+                            <input class="form-check-input mother-filter" type="checkbox" value="@mother" id="@("mother_" + mother)">
+                            <label class="form-check-label" for="@("mother_" + mother)">@mother</label>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="dropdown">
+            <a class="nav-link text-center form-select m-0" href="#" role="button" id="placeOfBirthDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Select Place of Birth
+            </a>
+            <ul class="dropdown-menu w-100" aria-labelledby="placeOfBirthDropdown">
+                <li>
+                    <button class="btn btn-outline-warning w-75 d-block mx-auto mb-2 uncheck-filter-btn" data-filter="place-of-birth">Clear All</button>
+                </li>
+                <li>
+                    <div class="input-group px-2">
+                        <input type="text" class="form-control place-of-birth-search" placeholder="Search">
+                    </div>
+                </li>
+                <li>
+                    <hr class="my-2">
+                </li>
+                @foreach (var placeOfBirth in Model.Select(item => item.PlaceOfBirth).Distinct())
+                {
+                    <li class="place-of-birth-filter-item">
+                        <div class="form-check form-check-inline ms-2">
+                            <input class="form-check-input place-of-birth-filter" type="checkbox" value="@placeOfBirth" id="@("placeOfBirth_" + placeOfBirth)">
+                            <label class="form-check-label" for="@("placeOfBirth_" + placeOfBirth)">@placeOfBirth</label>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<table class="table w-100 display nowrap" id="example">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Health)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateOfBirth)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PlaceOfBirth)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FatherName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MotherName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Health)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateOfBirth)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PlaceOfBirth)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FatherName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MotherName)
+                </td>
+                <td class="position-relative">
+                    @{
+                        var status = item.Status ? "bg-success" : "bg-warning";
+                        var title = item.Status ? "Finished" : "Not Finished";
+                    }
+                    <div class="rounded-circle @status position-absolute" style="width: 10px; height: 10px; top: 50%; transform: translate(-50%, -50%); left: 50%;" title="@title"></div>
+                </td>
+                <td class="dropdown">
+                    <a class="nav-link text-center m-0" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-three-dots fs-4"></i>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <li><a asp-action="Print" class="dropdown-item ps-1" asp-route-id="@item.BirthCertificateId"><i class="bi bi-printer ms-3"></i> Print</a></li>
+                        <li><a asp-action="Edit" class="dropdown-item ps-1" asp-route-id="@item.BirthCertificateId"><i class="bi bi-pencil-square ms-3"></i> Edit</a></li>
+                        <li><a asp-action="Details" class="dropdown-item ps-1" asp-route-id="@item.BirthCertificateId"><i class="bi bi-info-circle ms-3"></i> Details</a></li>
+                        <li><a asp-action="Delete" class="dropdown-item ps-1" asp-route-id="@item.BirthCertificateId"><i class="bi bi-trash3 ms-3"></i> Delete</a></li>
+                    </ul>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
