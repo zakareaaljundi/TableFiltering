@@ -96,12 +96,8 @@
                 }
             });
         });
-
-        $('.uncheck-filter-btn').click(function () {
-            $('.father-filter').prop('checked', false);
-            $('.father-filter-item').hide();
-        });
     </script>
+
     <script>
         $('.mother-search').on('input', function () {
             var searchQuery = $(this).val().toLowerCase();
@@ -115,12 +111,7 @@
                     $(this).show();
                 }
             });
-        });
-
-        $('.uncheck-filter-btn').click(function () {
-            $('.mother-filter').prop('checked', false);
-            $('.mother-filter-item').hide();
-        });
+        }); 
     </script>
 
     <script>
@@ -137,10 +128,15 @@
                 }
             });
         });
+    </script>
 
+    <script>
         $('.uncheck-filter-btn').click(function () {
-            $('.place-of-birth-filter').prop('checked', false);
-            $('.place-of-birth-filter-item').hide();
+            var filterType = $(this).data('filter');
+            var filterSelector = '.' + filterType + '-filter';
+
+            $(filterSelector).prop('checked', false);
+            $(filterSelector + '-item').hide();
         });
     </script>
 
@@ -188,7 +184,17 @@
 
                 // Redraw the table
                 table.draw();
+                updateCheckedCount('father');
+                updateCheckedCount('mother');
+                updateCheckedCount('place-of-birth');
             }
+
+            function updateCheckedCount(filterType) {
+                var checkboxes = document.querySelectorAll('.' + filterType + '-filter:checked');
+                var counterElement = document.querySelector('[data-counter="' + filterType + '-counter"]');
+                counterElement.textContent = checkboxes.length; // Update the text content with the count
+            }
+
 
             // Add event listener to "Clear All" buttons
             var clearAllButtons = document.querySelectorAll('.uncheck-filter-btn');
