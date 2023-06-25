@@ -3,164 +3,232 @@
     ViewData["Title"] = "Print";
 }
 
-<div id="certificate" class="w-100 bg-light p-5" style="border-radius: 20px;">
-    <div class="row my-5">
-        <div class="col-6">
-            <h1 class="mb-5">Birth Certificate</h1>
-            <h6>The name of the newborn</h6>
-            <h3>@Html.DisplayFor(model=> model.Name) Osama Salim Aljundi</h3>
+<div id="certificate" class="bg-white p-5" style="border-radius: 20px; box-shadow: 0 0 5px; width: 790px">
+    <div class="row mb-5 mt-3">
+        <div class="col-9 d-flex flex-column justify-content-evenly position-relative">
+            @*<h1 class="mb-5">@Html.DisplayFor(model=> model.Name) Birth Certificate</h1>*@
+            <h1 class="mb-5 font-weight-bold">Birth Certificate</h1>
+            <div class="mt-4">
+                <h6>The name of the newborn</h6>
+                <h3>@Html.DisplayFor(model=> model.Name) Osama Salim Aljundi</h3>
+            </div>
+            <img class="w-25 position-absolute top-0"style="right: 0;" src="~/images/approved.png" />
         </div>
         <div class="col-3">
-            <img class="w-75" src="~/images/approved.png" />
-        </div>
-        <div class="col-3">
-            <div class="w-75 h-75 bg-dark">
+            <div>
+                <canvas class="w-100 h-100" id="qrcode"></canvas>
             </div>
         </div>
     </div>
     <hr />
     <div class="row my-5">
-        <h4>Child Info</h4>
+        <h5 class="mb-4">Child Info</h5>
         <div class="d-flex">
-            <div class="w-25 py-1 px-2" style="border: 1px solid; border-right: none; border-left: none;">
+            <div class="w-25 py-1 px-2" style="border-top: 1px solid;">
                 <div>Health ID</div>
                 <div>@Html.DisplayFor(model=> model.Health)</div>
             </div>
-            <div class="w-25 py-1 px-2" style="border: 1px solid;">
+            <div class="w-25 py-1 px-2" style="border-top: 1px solid; border-left: 1px solid">
                 <div>Certificate Number</div>
                 <div>@Html.DisplayFor(model=> model.BirthCertificateId)</div>
             </div>
-            <div class="w-25 py-1 px-2" style="border: 1px solid;">
+            <div class="w-25 py-1 px-2" style="border-top: 1px solid; border-left: 1px solid">
                 <div>Registeration Date</div>
                 <div>@Html.DisplayFor(model=> model.CreationDate)</div>
             </div>
-            <div class="w-25 py-1 px-2" style="border: 1px solid; border-right: none; border-left: none; ">
+            <div class="w-25 py-1 px-2" style="border-top: 1px solid; border-left: 1px solid">
                 <div>Birth Type</div>
                 <div>@Html.DisplayFor(model=> model.Name)</div>
             </div>
         </div>
         <div class="d-flex">
-            <div class="w-50 py-1 px-2" style="border: 1px solid; border-left: none;">
+            <div class="w-50 py-1 px-2" style="border-top: 1px solid; border-bottom: 1px solid">
                 <div>Natural birth or caesarean section?</div>
                 <div>@Html.DisplayFor(model=> model.Health)</div>
             </div>
-            <div class="w-50 py-1 px-2" style="border: 1px solid; border-right: none; border-left: none;">
+            <div class="w-50 py-1 px-2" style="border: 1px solid; border-right: none;">
                 <div>Date of birth in three syllables</div>
                 <div>@Html.DisplayFor(model=> model.DateOfBirth)</div>
             </div>
         </div>
     </div>
     <div class="row my-5">
-        <h4>Place of Birth</h4>
+        <h5 class="mb-4">Place of Birth</h5>
         <div class="d-flex">
-            <div class="w-25 py-1 px-2" style="border: 1px solid; border-right: none; border-left: none;">
+            <div class="w-25 py-1 px-2" style="border-top: 1px solid;">
                 <div>Place of Birth</div>
                 <div>@Html.DisplayFor(model=> model.PlaceOfBirth)</div>
             </div>
-            <div class="w-25 py-1 px-2" style="border: 1px solid;">
+            <div class="w-25 py-1 px-2" style="border-top: 1px solid; border-left: 1px solid">
                 <div>Governorate</div>
                 <div>@Html.DisplayFor(model=> model.PlaceOfBirth)</div>
             </div>
-            <div class="w-25 py-1 px-2" style="border: 1px solid;">
+            <div class="w-25 py-1 px-2" style="border-top: 1px solid; border-left: 1px solid">
                 <div>District</div>
                 <div>@Html.DisplayFor(model=> model.PlaceOfBirth)</div>
             </div>
-            <div class="w-25 py-1 px-2" style="border: 1px solid; border-right: none; border-left: none; ">
+            <div class="w-25 py-1 px-2" style="border-top: 1px solid; border-left: 1px solid">
                 <div>Dirctorate</div>
                 <div>@Html.DisplayFor(model=> model.PlaceOfBirth)</div>
             </div>
         </div>
         <div class="d-flex">
-            <div class="w-25 py-1 px-2" style="border: 1px solid; border-right: none; border-left: none;">
+            <div class="w-25 py-1 px-2" style="border-top: 1px solid; border-bottom: 1px solid">
                 <div>Hospital icon</div>
                 <div><i class="bi bi-plus"></i></div>
             </div>
-            <div class="w-25 py-1 px-2" style="border: 1px solid;">
+            <div class="w-25 py-1 px-2" style="border: 1px solid; border-right: none">
                 <div>Baby Weight</div>
                 <div>@Html.DisplayFor(model=> model.BirthCertificateId)</div>
             </div>
-            <div class="w-25 py-1 px-2" style="border: 1px solid;">
+            <div class="w-25 py-1 px-2" style="border: 1px solid; border-right: none">
                 <div>Duration of Pregnancy</div>
                 <div>@Html.DisplayFor(model=> model.CreationDate)</div>
             </div>
-            <div class="w-25 py-1 px-2" style="border: 1px solid; border-right: none; border-left: none; ">
+            <div class="w-25 py-1 px-2" style="border: 1px solid; border-right: none;">
                 <div>Birth word by</div>
                 <div>@Html.DisplayFor(model=> model.Name)</div>
             </div>
         </div>
     </div>
     <div class="row my-5">
-        <h4>Father's Info</h4>
+        <h5 class="mb-4">Father's Info</h5>
         <div class="d-flex">
-            <div class="w-100 py-1 px-2" style="border: 1px solid; border-right: none; border-left: none;">
+            <div class="w-100 py-1 px-2" style="border-top: 1px solid;">
                 <div>Father's Name</div>
                 <div>@Html.DisplayFor(model=> model.FatherName)</div>
             </div>
         </div>
-            <div class="d-flex">
-            <div class="w-25 py-1 px-2" style="border: 1px solid; border-right: none; border-left: none;">
+        <div class="d-flex">
+            <div class="w-25 py-1 px-2" style="border-top: 1px solid; border-bottom: 1px solid;">
                 <div>Father's religion</div>
                 <div>@Html.DisplayFor(model=> model.FatherName)</div>
             </div>
-            <div class="w-25 py-1 px-2" style="border: 1px solid;">
+            <div class="w-25 py-1 px-2" style="border: 1px solid; border-right: none;">
                 <div>Father's job</div>
                 <div>@Html.DisplayFor(model=> model.FatherName)</div>
             </div>
-            <div class="w-25 py-1 px-2" style="border: 1px solid;">
+            <div class="w-25 py-1 px-2" style="border: 1px solid; border-right: none;">
                 <div>Father's nationality</div>
                 <div>@Html.DisplayFor(model=> model.FatherName)</div>
             </div>
-            <div class="w-25 py-1 px-2" style="border: 1px solid; border-right: none; border-left: none; ">
+            <div class="w-25 py-1 px-2" style="border: 1px solid; border-right: none; ">
                 <div>Father's age</div>
                 <div>@Html.DisplayFor(model=> model.FatherName)</div>
             </div>
         </div>
     </div>
     <div class="row my-5">
-        <h4>Mother's Info</h4>
+        <h5 class="mb-4">Mother's Info</h5>
         <div class="d-flex">
-            <div class="w-100 py-1 px-2" style="border: 1px solid; border-right: none; border-left: none;">
+            <div class="w-100 py-1 px-2" style="border-top: 1px solid;">
                 <div>Mother's Name</div>
                 <div>@Html.DisplayFor(model=> model.MotherName)</div>
             </div>
         </div>
-            <div class="d-flex">
-            <div class="w-25 py-1 px-2" style="border: 1px solid; border-right: none; border-left: none;">
+        <div class="d-flex">
+            <div class="w-25 py-1 px-2" style="border-top: 1px solid; border-bottom: 1px solid;">
                 <div>Mother's religion</div>
                 <div>@Html.DisplayFor(model=> model.MotherName)</div>
             </div>
-            <div class="w-25 py-1 px-2" style="border: 1px solid;">
+            <div class="w-25 py-1 px-2" style="border: 1px solid; border-right: none;">
                 <div>Mother's job</div>
                 <div>@Html.DisplayFor(model=> model.MotherName)</div>
             </div>
-            <div class="w-25 py-1 px-2" style="border: 1px solid;">
+            <div class="w-25 py-1 px-2" style="border: 1px solid; border-right: none">
                 <div>Mother's nationality</div>
                 <div>@Html.DisplayFor(model=> model.MotherName)</div>
             </div>
-            <div class="w-25 py-1 px-2" style="border: 1px solid; border-right: none; border-left: none; ">
+            <div class="w-25 py-1 px-2" style="border: 1px solid; border-right: none; ">
                 <div>Mother's age</div>
                 <div>@Html.DisplayFor(model=> model.MotherName)</div>
             </div>
         </div>
     </div>
 </div>
-
-
-
-<!-- Add the print button -->
 <div class="row my-5">
     <div class="col">
         <button onclick="convertToPdf()" class="btn btn-primary">Print</button>
+        <a asp-action="Index" class="btn btn-warning ms-2">Cancel</a>
     </div>
 </div>
 
+
+<script src="~/js/qrious.js"></script>
 <script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+        generateQRCode();
+    });
+
+    function generateQRCode() {
+        // Generate the QR code
+        const qrCodeElement = document.getElementById("qrcode");
+        const qrCode = new QRious({
+            element: qrCodeElement,
+            value: document.querySelector("#certificate").innerText,
+            size: 128,
+        });
+    }
+
     function convertToPdf() {
         const certificateElement = document.getElementById("certificate");
-        certificateElement.style.marginTop = "0"; // Set margin top to 0
+        const qrCodeElement = document.getElementById("qrcode");
 
+        // Set the display property of the QR code element to block
+        // to ensure it's visible in the PDF
+        qrCodeElement.style.display = "block";
+
+        // Generate the QR code
+        generateQRCode();
+
+        // Set the PDF generation options
+        const options = {
+            margin: [10, 0, 10, 0], // [top, right, bottom, left]
+            filename: "birth_certificate.pdf",
+            image: { type: "jpeg", quality: 1 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: "px", format: "a4", orientation: "portrait" }
+        };
+
+        // Convert the page to PDF with the specified options
         html2pdf()
+            .set(options)
             .from(certificateElement)
-            .save("birth_certificate.pdf");
+            .save();
     }
 </script>
+
+
+
+
+@*<button class="print-btn btn btn-warning">Print</button>
+
+<script type="text/javascript">
+    $(document).ready(function ($) {
+        $(document).on('click', '.print-btn', function (event) {
+            event.preventDefault();
+            var element = document.getElementById('certificate');
+            html2pdf().from(element).save();
+            var opt = {
+                margin: 0.5,
+                filename: 'pagecontent_' + js.AutoCode() + '.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2convas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+        });
+    });
+</script>
+*@
+@*
+
+<button class="btn">click</button>
+<script>
+    let div = document.querySelector(".certificate");
+    let btn = document.querySelector(".btn");
+    btn.addEventListener("click", ()=>{
+        html2pdf().from(div).save()
+    })
+</script>*@
+<!-- Add the print button -->
+

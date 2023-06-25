@@ -1,0 +1,9 @@
+﻿/*body * {
+    visibility: hidden;
+}
+
+#certificate,
+#certificate * {
+    visibility: visible;
+}
+*/

@@ -7,18 +7,24 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/TableFiltering.styles.css" asp-append-version="true" />
+    @*    <link rel="stylesheet" type="text/css" href="~/css/print.css" media="print">
+    *@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <style>
         thead input {
             width: 100%;
         }
     </style>
+
     <link href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/fixedheader/3.2.3/css/fixedHeader.dataTables.min.css" rel="stylesheet" />
+
 </head>
-<body>
+<body class="bg-light">
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
@@ -42,12 +48,13 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
-            <p class="display-2 mb-4 text-center">Home</p>
             <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-2 bg-white p-5 rounded-3">
                     <a asp-action="Index" asp-controller="BirthCertificates" class="">Birth Certificates</a>
                 </div>
-                <div class="col-md-10">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-9 p-5">
                     @RenderBody()
                 </div>
             </div>
@@ -68,13 +75,143 @@
     <script src="https://cdn.datatables.net/fixedheader/3.2.3/js/dataTables.fixedHeader.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
-        <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js" ></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html-pdf/2.2.0/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
+
     <script>
+        $('.father-search').on('input', function () {
+            var searchQuery = $(this).val().toLowerCase();
+            $('.father-filter-item').hide();
+            if (searchQuery.trim() === '') {
+                return;
+            }
+            $('.father-filter-item').each(function () {
+                var father = $(this).find('label').text().toLowerCase();
+                if (father.indexOf(searchQuery) !== -1) {
+                    $(this).show();
+                }
+            });
+        });
+
+        $('.uncheck-filter-btn').click(function () {
+            $('.father-filter').prop('checked', false);
+            $('.father-filter-item').hide();
+        });
+    </script>
+    <script>
+        $('.mother-search').on('input', function () {
+            var searchQuery = $(this).val().toLowerCase();
+            $('.mother-filter-item').hide();
+            if (searchQuery.trim() === '') {
+                return;
+            }
+            $('.mother-filter-item').each(function () {
+                var mother = $(this).find('label').text().toLowerCase();
+                if (mother.indexOf(searchQuery) !== -1) {
+                    $(this).show();
+                }
+            });
+        });
+
+        $('.uncheck-filter-btn').click(function () {
+            $('.mother-filter').prop('checked', false);
+            $('.mother-filter-item').hide();
+        });
+    </script>
+
+    <script>
+        $('.place-of-birth-search').on('input', function () {
+            var searchQuery = $(this).val().toLowerCase();
+            $('.place-of-birth-filter-item').hide();
+            if (searchQuery.trim() === '') {
+                return;
+            }
+            $('.place-of-birth-filter-item').each(function () {
+                var placeOfBirth = $(this).find('label').text().toLowerCase();
+                if (placeOfBirth.indexOf(searchQuery) !== -1) {
+                    $(this).show();
+                }
+            });
+        });
+
+        $('.uncheck-filter-btn').click(function () {
+            $('.place-of-birth-filter').prop('checked', false);
+            $('.place-of-birth-filter-item').hide();
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Function to clear filters and reset table
+            function clearFilters() {
+                // Clear search inputs
+                var fatherSearchInput = document.querySelector('.father-search');
+                fatherSearchInput.value = '';
+
+                var motherSearchInput = document.querySelector('.mother-search');
+                motherSearchInput.value = '';
+
+                var placeOfBirthSearchInput = document.querySelector('.place-of-birth-search');
+                placeOfBirthSearchInput.value = '';
+            }
+
+            // Function to update table based on checked checkboxes
+            function updateTable() {
+                var fatherCheckboxes = document.querySelectorAll('.father-filter:checked');
+                var fatherValues = Array.from(fatherCheckboxes).map(function (checkbox) {
+                    return checkbox.value;
+                });
+
+                var motherCheckboxes = document.querySelectorAll('.mother-filter:checked');
+                var motherValues = Array.from(motherCheckboxes).map(function (checkbox) {
+                    return checkbox.value;
+                });
+
+                var placeOfBirthCheckboxes = document.querySelectorAll('.place-of-birth-filter:checked');
+                var placeOfBirthValues = Array.from(placeOfBirthCheckboxes).map(function (checkbox) {
+                    return checkbox.value;
+                });
+
+                var table = $('#example').DataTable();
+
+                // Clear search queries and column filters before applying changes
+                table.search('').columns().search('').draw();
+
+                // Apply filters based on checked checkboxes
+                table.column(4).search(fatherValues.join('|'), true, false);
+                table.column(5).search(motherValues.join('|'), true, false);
+                table.column(3).search(placeOfBirthValues.join('|'), true, false);
+
+                // Redraw the table
+                table.draw();
+            }
+
+            // Add event listener to "Clear All" buttons
+            var clearAllButtons = document.querySelectorAll('.uncheck-filter-btn');
+            clearAllButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    clearFilters();
+                    updateTable();
+                });
+            });
+
+            // Add event listener to filter checkboxes
+            var checkboxes = document.querySelectorAll('.form-check-input');
+            checkboxes.forEach(function (checkbox) {
+                checkbox.addEventListener('change', function () {
+                    updateTable();
+                });
+            });
+        });
+    </script>
+
+
+
+    @*<script>
 
         $(document).ready(function () {
             // Setup - add a text input to each footer cell
@@ -200,8 +337,8 @@
             });
 
         });
-    </script>
-    <script>
+    </script>*@
+  @*  <script>
         // Father search functionality
         $('.father-search').on('input', function () {
             var searchText = $(this).val().toLowerCase();
@@ -240,8 +377,8 @@
                 }
             });
         });
-    </script>
-    <script>
+    </script>*@
+@*    <script>
         $(document).ready(function () {
             $('.uncheck-filter-btn').on('click', function () {
                 var filter = $(this).data('filter');
@@ -249,73 +386,70 @@
                 clearFilters(); // Add this line to clear the filters and redraw the table
             });
         });
-    </script>
+    </script>*@
+
+
+
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Function to clear filters and reset table
-            function clearFilters() {
-                // Clear search inputs
-                var fatherSearchInput = document.querySelector('.father-search');
-                fatherSearchInput.value = '';
-
-                var motherSearchInput = document.querySelector('.mother-search');
-                motherSearchInput.value = '';
-
-                var placeOfBirthSearchInput = document.querySelector('.place-of-birth-search');
-                placeOfBirthSearchInput.value = '';
-            }
-
-            // Function to update table based on checked checkboxes
-            function updateTable() {
-                var fatherCheckboxes = document.querySelectorAll('.father-filter:checked');
-                var fatherValues = Array.from(fatherCheckboxes).map(function (checkbox) {
-                    return checkbox.value;
-                });
-
-                var motherCheckboxes = document.querySelectorAll('.mother-filter:checked');
-                var motherValues = Array.from(motherCheckboxes).map(function (checkbox) {
-                    return checkbox.value;
-                });
-
-                var placeOfBirthCheckboxes = document.querySelectorAll('.place-of-birth-filter:checked');
-                var placeOfBirthValues = Array.from(placeOfBirthCheckboxes).map(function (checkbox) {
-                    return checkbox.value;
-                });
-
-                var table = $('#example').DataTable();
-
-                // Clear search queries and column filters before applying changes
-                table.search('').columns().search('').draw();
-
-                // Apply filters based on checked checkboxes
-                table.column(4).search(fatherValues.join('|'), true, false);
-                table.column(5).search(motherValues.join('|'), true, false);
-                table.column(3).search(placeOfBirthValues.join('|'), true, false);
-
-                // Redraw the table
-                table.draw();
-            }
-
-            // Add event listener to "Clear All" buttons
-            var clearAllButtons = document.querySelectorAll('.uncheck-filter-btn');
-            clearAllButtons.forEach(function (button) {
-                button.addEventListener('click', function () {
-                    clearFilters();
-                    updateTable();
-                });
+        $(document).ready(function () {
+            // Trigger the filtering when the date inputs change
+            $("#minDate, #maxDate").on("change", function () {
+                filterTable();
             });
 
-            // Add event listener to filter checkboxes
-            var checkboxes = document.querySelectorAll('.form-check-input');
-            checkboxes.forEach(function (checkbox) {
-                checkbox.addEventListener('change', function () {
-                    updateTable();
+            // Function to filter the table based on the date range
+            function filterTable() {
+                var minDate = new Date(document.getElementById("minDate").value);
+                var maxDate = new Date(document.getElementById("maxDate").value);
+
+                var table = $("#example");
+                var rows = table.find("tbody tr");
+
+                rows.each(function () {
+                    var row = $(this);
+                    var dateOfBirth = new Date(row.find("td:eq(2)").text());
+
+                    if ((minDate && dateOfBirth < minDate) || (maxDate && dateOfBirth > maxDate)) {
+                        row.hide();
+                    } else {
+                        row.show();
+                    }
                 });
-            });
+            }
         });
     </script>
 
 
+    <script src="~/js/qrious.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', (event) => {
+            generateQRCode();
+        });
+
+        function generateQRCode() {
+            // Generate the QR code
+            const qrCodeElement = document.getElementById("qrcode");
+            const qrCode = new QRious({
+                element: qrCodeElement,
+                value: document.querySelector("#certificate").innerText,
+                size: 128,
+            });
+        }
+
+        function convertToPdf() {
+            const certificateElement = document.getElementById("certificate");
+            certificateElement.style.marginTop = "0"; // Set margin top to 0
+
+            // Generate the QR code
+            generateQRCode();
+
+            // Convert the page to PDF
+            html2pdf()
+                .from(certificateElement)
+                .save("birth_certificate.pdf");
+        }
+
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

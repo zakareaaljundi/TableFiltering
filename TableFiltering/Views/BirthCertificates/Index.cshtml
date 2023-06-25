@@ -9,8 +9,17 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<div class="row text-center mb-3">
+    <div>
+        <label for="minDate" class="mx-2">Year From:</label>
+        <input type="date" id="minDate" class="form-control-sm" />
+        <label for="maxDate" class="mx-2">To:</label>
+        <input type="date" id="maxDate" class="form-control-sm" />
+    </div>
+</div>
+
 <div class="row mb-3">
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="dropdown">
             <a class="nav-link text-center form-select m-0" href="#" role="button" id="fatherDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 Select Father
@@ -29,7 +38,7 @@
                 </li>
                 @foreach (var father in Model.Select(item => item.FatherName).Distinct())
                 {
-                    <li class="father-filter-item">
+                    <li class="father-filter-item" style="display:none;">
                         <div class="form-check form-check-inline ms-2">
                             <input class="form-check-input father-filter" type="checkbox" value="@father" id="@("father_" + father)">
                             <label class="form-check-label" for="@("father_" + father)">@father</label>
@@ -39,7 +48,7 @@
             </ul>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="dropdown">
             <a class="nav-link text-center form-select m-0" href="#" role="button" id="motherDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 Select Mother
@@ -58,7 +67,7 @@
                 </li>
                 @foreach (var mother in Model.Select(item => item.MotherName).Distinct())
                 {
-                    <li class="mother-filter-item">
+                    <li class="mother-filter-item" style="display:none;">
                         <div class="form-check form-check-inline ms-2">
                             <input class="form-check-input mother-filter" type="checkbox" value="@mother" id="@("mother_" + mother)">
                             <label class="form-check-label" for="@("mother_" + mother)">@mother</label>
@@ -68,7 +77,7 @@
             </ul>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="dropdown">
             <a class="nav-link text-center form-select m-0" href="#" role="button" id="placeOfBirthDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 Select Place of Birth
@@ -87,7 +96,7 @@
                 </li>
                 @foreach (var placeOfBirth in Model.Select(item => item.PlaceOfBirth).Distinct())
                 {
-                    <li class="place-of-birth-filter-item">
+                    <li class="place-of-birth-filter-item" style="display:none;">
                         <div class="form-check form-check-inline ms-2">
                             <input class="form-check-input place-of-birth-filter" type="checkbox" value="@placeOfBirth" id="@("placeOfBirth_" + placeOfBirth)">
                             <label class="form-check-label" for="@("placeOfBirth_" + placeOfBirth)">@placeOfBirth</label>
@@ -98,7 +107,6 @@
         </div>
     </div>
 </div>
-
 
 <table class="table w-100 display nowrap" id="example">
     <thead>
